@@ -15,13 +15,13 @@ docker build -t buildenv:1.0 .
 
 2. Run a new container from the created image, and share code samples folder.
 ```
-docker run -it -v [host_samples_path]:[container_samples_path] buildenv_libs bash
+docker run -it -v [host_samples_path]:[container_samples_path] buildenv:1.0 bash
 ```
 
 3. Samples from chapter 2 require accsess to your graphical environment to show images. You can share you X11 server with a Docker container. The following script shows how to run a container with graphics environment:
 ```
 xhost +local:root
-docker run --net=host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -it -v [host_samples_path]:[container_samples_path] buildenv_libs bash
+docker run --net=host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -it -v [host_samples_path]:[container_samples_path] buildenv:1.0 bash
 ```
 
 9. In the started container console session navigate to the `container_samples_path\build_scripts` folder. You will find there scripts to build samples for each chapter. The following script shows how to build samples for chapter 1:

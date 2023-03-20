@@ -5,19 +5,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get -y update
 RUN apt-get -y upgrade
+
 RUN apt-get install -y unzip
-
-RUN mkdir development
-ADD checkout_lib.sh /development
-RUN chmod 777 /development/checkout_lib.sh
-ADD install_lib.sh /development
-RUN chmod 777 /development/install_lib.sh
-ADD install_env.sh /development
-RUN chmod 777 /development/install_env.sh
-ADD install_android.sh /development
-RUN chmod 777 /development/install_android.sh
-
-
 RUN apt-get install -y build-essential
 RUN apt-get install -y gdb
 RUN apt-get install -y git
@@ -51,4 +40,16 @@ RUN pip install pyyaml
 RUN pip install typing
 RUN pip install typing_extensions
 
+RUN mkdir development
+ADD checkout_lib.sh /development
+RUN chmod 777 /development/checkout_lib.sh
+ADD install_lib.sh /development
+RUN chmod 777 /development/install_lib.sh
+ADD install_env.sh /development
+RUN chmod 777 /development/install_env.sh
+ADD install_android.sh /development
+RUN chmod 777 /development/install_android.sh
+
+WORKDIR /development
+RUN ./install_env.sh
 

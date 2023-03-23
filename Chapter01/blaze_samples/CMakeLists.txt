@@ -18,6 +18,6 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
 include_directories(${BLAZE_PATH})
 
 add_executable(linalg_blaze "linalg_blaze.cc")
-# add_executable(linreg_blaze "linreg_blaze.cc")
-
+add_executable(linreg_blaze "linreg_blaze.cc")
+target_link_libraries(linreg_blaze blas lapack)
 

@@ -50,7 +50,7 @@ int main() {
   gd.setTolerance(0.001f);
   gd.compute(x);
   Eigen::VectorXf b = gd.solve(y);
-  std::cout << "Estimated parameters vector : " << b << std::endl;
+  std::cout << "Estimated parameters vector : \n" << b << std::endl;
 
   // normal equations
   Eigen::VectorXf b_norm = (x.transpose() * x).ldlt().solve(x.transpose() * y);

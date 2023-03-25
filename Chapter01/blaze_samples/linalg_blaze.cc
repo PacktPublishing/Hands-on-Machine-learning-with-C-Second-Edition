@@ -75,7 +75,7 @@ int main() {
 
     a += b;
     std::cout << "matrices a += b :\n"
-              << result << std::endl;
+              << a << std::endl;
 
     result = a * b;
     std::cout << "matrices a * b :\n"

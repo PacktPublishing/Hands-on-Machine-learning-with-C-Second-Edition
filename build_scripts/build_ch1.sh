@@ -23,5 +23,16 @@ cd build/
 cmake -DXTENSOR_PATH=$LIBS_DIR/include/ ..
 cmake --build . --target all
 
-cd $START_DIR
+cd $START_DIR/Chapter01/blaze_samples/
+mkdir build
+cd build/
+cmake -DBLAZE_PATH=$LIBS_DIR/include/ ..
+cmake --build . --target all
 
+cd $START_DIR/Chapter01/arrayfire_samples/
+mkdir build
+cd build/
+cmake -DArrayFire_DIR=$LIBS_DIR/share/ArrayFire/cmake/ ..
+cmake --build . --target all
+
+cd $START_DIR

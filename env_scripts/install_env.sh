@@ -13,6 +13,9 @@ mkdir -p libs/sources
 # Firearray
 . ./install_lib.sh https://github.com/arrayfire/arrayfire v3.8.3 -DBUILD_TESTS=OFF
 
+# Flashlight
+. ./install_lib.sh https://github.com/flashlight/flashlight.git v0.4.0 -DFL_BUILD_TESTS=OFF -DFL_BUILD_EXAMPLES=OFF -DFL_LIBRARIES_USE_MKL=OFF -DFL_USE_CPU=ON  -DFL_USE_ONEDNN=OFF -DArrayFire_DIR=/development/libs/share/ArrayFire/cmake/ -DFL_ARRAYFIRE_USE_CPU=ON
+
 # DLib
 . ./install_lib.sh https://github.com/davisking/dlib v19.24
 

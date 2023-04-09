@@ -1,43 +1,32 @@
 cmake_minimum_required(VERSION 3.0)
 project(hdf5_sample)
 
-find_package(HDF5 REQUIRED)
+find_package(HDF5 1.10.7 REQUIRED)
+find_package(HighFive 2.7.0 REQUIRED)
+find_package(nlohmann_json 3.11.2 REQUIRED)
 
-set(HDF5_LIB_PATH "" CACHE PATH "Path to hdf5 library include dir")
-set(JSON_LIB_PATH "" CACHE PATH "Path to json library include dir")
-
-if (NOT HIGHFIVE_LIB_PATH)
-  message(FATAL_ERROR "Missigng HIGHFIVE lib install path, please specify HIGHFIVE_LIB_PATH")
-else()
-  message("HIGHFIVE lib path is ${HIGHFIVE_LIB_PATH}")
-endif()
-
-if (NOT JSON_LIB_PATH)
-  message(FATAL_ERROR "Missing Json lib install path, please specify JSON_LIB_PATH")
-else()
-  message("Json lib path is ${JSON_LIB_PATH}")
-endif()
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
-set(CMAKE_CXX_FLAGS "-std=c++17 -msse3 -fopenmp -Wall -Wextra ")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
-set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
+add_compile_options(
+       -Wall -Wextra -msse3 -fopenmp
+       $<$<CONFIG:RELEASE>:-Ofast>
+       $<$<CONFIG:DEBUG>:-O0>
+       $<$<CONFIG:DEBUG>:-ggdb3>
+)
 
-set(requiredlibs "stdc++fs")
-list(APPEND requiredlibs "stdc++")
-list(APPEND requiredlibs ${HDF5_LIBRARIES})
-
-include_directories(${HDF5_INCLUDE_DIR})
-include_directories(${HIGHFIVE_LIB_PATH})
-include_directories(${JSON_LIB_PATH})
+add_compile_definitions(
+        $<$<CONFIG:RELEASE>:NDEBUG>
+)
 
 set(SOURCES hdf5.cc
-            ../../json/cpp/paper.h
-            ../../json/cpp/review.h
-            ../../json/cpp/reviewsreader.h
-            ../../json/cpp/reviewsreader.cpp)
+            ../../json/paper.h
+            ../../json/review.h
+            ../../json/reviewsreader.h
+            ../../json/reviewsreader.cpp)
 
 add_executable(hdf5_sample ${SOURCES})
-target_link_libraries(hdf5_sample ${requiredlibs})
-
+target_link_libraries(hdf5_sample nlohmann_json::nlohmann_json HighFive)

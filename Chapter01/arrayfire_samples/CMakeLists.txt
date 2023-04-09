@@ -1,15 +1,24 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.22)
 project(arrayfire_samples)
 
 find_package(ArrayFire)
 
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
-set(CMAKE_CXX_FLAGS "-std=c++17 -msse3 -fopenmp -Wall -Wextra ")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
-set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
+add_compile_options(
+       -Wall -Wextra -msse3 -fopenmp
+       $<$<CONFIG:RELEASE>:-Ofast>
+       $<$<CONFIG:DEBUG>:-O0>
+       $<$<CONFIG:DEBUG>:-ggdb3>
+)
 
-include_directories(${BLAZE_PATH})
+add_compile_definitions(
+        $<$<CONFIG:RELEASE>:NDEBUG>
+)
 
 add_executable(linalg_af "linalg_af.cc")
 target_link_libraries(linalg_af ArrayFire::afcpu)

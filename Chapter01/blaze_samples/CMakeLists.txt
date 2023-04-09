@@ -1,23 +1,28 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.22)
 project(blaze_samples)
 
-set(BLAZE_PATH "" CACHE PATH "Path to Blaze")
+find_package(blaze 3.8.2 REQUIRED)
 
-if(NOT BLAZE_PATH)
-  message(FATAL_ERROR "Missing Blaze install path, please specify BLAZE_PATH")
-else()
-  message("Blaze path is ${BLAZE_PATH}")
-endif()
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
-set(CMAKE_CXX_FLAGS "-std=c++17 -msse3 -fopenmp -Wall -Wextra ")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
-set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
+add_compile_options(
+       -Wall -Wextra -msse3 -fopenmp
+       $<$<CONFIG:RELEASE>:-Ofast>
+       $<$<CONFIG:DEBUG>:-O0>
+       $<$<CONFIG:DEBUG>:-ggdb3>
+)
 
-include_directories(${BLAZE_PATH})
+add_compile_definitions(
+        $<$<CONFIG:RELEASE>:NDEBUG>
+)
 
 add_executable(linalg_blaze "linalg_blaze.cc")
+target_link_libraries(linalg_blaze blas lapack blaze::blaze)
+
 add_executable(linreg_blaze "linreg_blaze.cc")
-target_link_libraries(linreg_blaze blas lapack)
+target_link_libraries(linreg_blaze blas lapack blaze::blaze)
 

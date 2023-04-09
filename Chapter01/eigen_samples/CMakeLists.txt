@@ -1,23 +1,28 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.22)
 project(eigen_samples)
 
-set(EIGEN_PATH "" CACHE PATH "Path to Eigen")
+find_package(OpenMP)
+find_package(Eigen3 3.4.0 REQUIRED)
 
-if(NOT EIGEN_PATH)
-  message(FATAL_ERROR "Missing Eigen install path, please specify EIGEN_PATH")
-else()
-  message("Eigen path is ${EIGEN_PATH}")
-endif()
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
-set(CMAKE_CXX_FLAGS "-std=c++17 -msse3 -fopenmp -Wall -Wextra ")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
-set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
+add_compile_options(
+       -Wall -Wextra -msse3
+       $<$<CONFIG:RELEASE>:-Ofast>
+       $<$<CONFIG:DEBUG>:-O0>
+       $<$<CONFIG:DEBUG>:-ggdb3>
+)
 
-include_directories(${EIGEN_PATH})
+add_compile_definitions(
+        $<$<CONFIG:RELEASE>:NDEBUG>
+)
 
 add_executable(linalg_eigen "linalg_eigen.cc")
+target_link_libraries(linalg_eigen Eigen3::Eigen OpenMP::OpenMP_CXX)
+
 add_executable(linreg_eigen "linreg_eigen.cc")
-
-
+target_link_libraries(linreg_eigen Eigen3::Eigen OpenMP::OpenMP_CXX)

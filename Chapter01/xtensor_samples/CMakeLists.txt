@@ -1,24 +1,29 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.22)
 project(xtensor_samples)
 
-set(XTENSOR_PATH "" CACHE PATH "Path to xtensor include dir")
+find_package(xtensor 0.24.5 REQUIRED)
+find_package(xtensor-blas 0.20.0 REQUIRED)
 
-if(NOT XTENSOR_PATH)
-  message(FATAL_ERROR "Missing xtensor install path, please specify XTENSOR_PATH")
-else()
-  message("xtensor path is ${XTENSOR_PATH}")
-endif()
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
-set(CMAKE_CXX_FLAGS "-std=c++17 -msse3 -fopenmp -Wall -Wextra ")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
-set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
+add_compile_options(
+       -Wall -Wextra -msse3
+       $<$<CONFIG:RELEASE>:-Ofast>
+       $<$<CONFIG:DEBUG>:-O0>
+       $<$<CONFIG:DEBUG>:-ggdb3>
+)
 
-include_directories(${XTENSOR_PATH})
+add_compile_definitions(
+        $<$<CONFIG:RELEASE>:NDEBUG>
+)
 
 add_executable(linalg_xtensor "linalg_xtensor.cc")
-target_link_libraries(linalg_xtensor cblas)
+target_include_directories(linalg_xtensor PRIVATE ${xtensor_INCLUDE_DIRS})
+target_link_libraries(linalg_xtensor blas)
 
 
 

@@ -1,14 +1,7 @@
 cmake_minimum_required(VERSION 3.22)
-project(csv_sample)
+project(json_sample)
 
-set(CSV_LIB_PATH "" CACHE PATH "Path to csv library include dir")
-
-if (NOT CSV_LIB_PATH)
-  message(FATAL_ERROR "Missigng CSV lib install path, please specify CSV_LIB_PATH")
-else()
-  message("CSV lib path is ${CSV_LIB_PATH}")
-endif()
-
+find_package(nlohmann_json 3.11.2 REQUIRED)
 find_package(Eigen3 3.4.0 REQUIRED)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -28,7 +21,11 @@ add_compile_definitions(
         $<$<CONFIG:RELEASE>:NDEBUG>
 )
 
-include_directories(${CSV_LIB_PATH})
+set(SOURCES json.cc
+            review.h
+            paper.h
+            reviewsreader.h
+            reviewsreader.cpp)
 
-add_executable(csv_sample "csv.cc")
-target_link_libraries (csv_sample Eigen3::Eigen)
+add_executable(json_sample ${SOURCES})
+target_link_libraries(json_sample Eigen3::Eigen nlohmann_json::nlohmann_json)

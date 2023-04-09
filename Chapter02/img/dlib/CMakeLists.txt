@@ -1,31 +1,24 @@
-cmake_minimum_required(VERSION 3.10)
-project(dlib-img-sample)
+cmake_minimum_required(VERSION 3.22)
+project(img-dlib)
 
-set(DLIB_PATH "" CACHE PATH "path to dlib install dir")
+find_package(dlib 19.24 REQUIRED)
 
-if (NOT DLIB_PATH)
-  message(FATAL_ERROR "Missigng Dlib install path, please specify DLIB_PATH")
-else()
-  message("Dlib path is ${DLIB_PATH}")
-endif()
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
-set(requiredlibs "cblas")
-list(APPEND requiredlibs "lapack")
+add_compile_options(
+       -Wall -Wextra -msse3 -fopenmp
+       $<$<CONFIG:RELEASE>:-Ofast>
+       $<$<CONFIG:DEBUG>:-O0>
+       $<$<CONFIG:DEBUG>:-ggdb3>
+)
 
-list(APPEND requiredlibs X11)
-list(APPEND requiredlibs png jpeg)
-
-set(CMAKE_CXX_FLAGS "-std=c++17 -msse3 -fopenmp -Wall -Wextra")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
-set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
-
-include_directories(${DLIB_PATH}/include)
-link_directories(${DLIB_PATH}/lib)
-link_directories(${DLIB_PATH}/lib64)
+add_compile_definitions(
+        $<$<CONFIG:RELEASE>:NDEBUG>
+)
 
 add_executable(img-dlib "img_dlib.cc")
-target_link_libraries(img-dlib dlib)
-target_link_libraries(img-dlib  ${requiredlibs})
-
+target_link_libraries(img-dlib  dlib::dlib)

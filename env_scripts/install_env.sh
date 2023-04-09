@@ -47,7 +47,7 @@ mkdir -p libs/sources
 . ./install_lib.sh https://github.com/onnx/onnx.git v1.13.1 -DONNX_NAMESPACE=onnx_torch
 
 # HighFive
-. ./install_lib.sh https://github.com/BlueBrain/HighFive v2.6.2
+. ./install_lib.sh https://github.com/BlueBrain/HighFive v2.7.0
 
 # cpp-httplib
 . ./install_lib.sh https://github.com/yhirose/cpp-httplib v0.12.1

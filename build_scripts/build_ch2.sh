@@ -17,6 +17,12 @@ cd build/
 cmake -DCMAKE_PREFIX_PATH=/development/libs/ ..
 cmake --build . --target all
 
+cd $START_DIR/Chapter02/csv/mlpack
+mkdir build
+cd build/
+cmake -DCMAKE_PREFIX_PATH=/development/libs/ ..
+cmake --build . --target all
+
 cd $START_DIR/Chapter02/img/dlib/
 mkdir build
 cd build/

@@ -8,31 +8,31 @@ LIBS_DIR=/development/libs
 cd $START_DIR/Chapter01/dlib_samples/
 mkdir build 
 cd build/
-cmake -DDLIB_PATH=$LIBS_DIR ..
+cmake -DCMAKE_PREFIX_PATH=/development/libs/ ..
 cmake --build . --target all
 
 cd $START_DIR/Chapter01/eigen_samples/
 mkdir build
 cd build
-cmake -DEIGEN_PATH=$LIBS_DIR/include/eigen3/ ..
+cmake -DCMAKE_PREFIX_PATH=/development/libs/ ..
 cmake --build . --target all
 
 cd $START_DIR/Chapter01/xtensor_samples/
 mkdir build
 cd build/
-cmake -DXTENSOR_PATH=$LIBS_DIR/include/ ..
+cmake -DCMAKE_PREFIX_PATH=/development/libs/ ..
 cmake --build . --target all
 
 cd $START_DIR/Chapter01/blaze_samples/
 mkdir build
 cd build/
-cmake -DBLAZE_PATH=$LIBS_DIR/include/ ..
+cmake -DCMAKE_PREFIX_PATH=/development/libs/ ..
 cmake --build . --target all
 
 cd $START_DIR/Chapter01/arrayfire_samples/
 mkdir build
 cd build/
-cmake -DArrayFire_DIR=$LIBS_DIR/share/ArrayFire/cmake/ ..
+cmake -DCMAKE_PREFIX_PATH=/development/libs/ ..
 cmake --build . --target all
 
 cd $START_DIR

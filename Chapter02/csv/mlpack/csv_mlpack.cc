@@ -3,7 +3,6 @@
 #include <iostream>
 #include <mlpack/core.hpp>
 #include <regex>
-#include "mlpack/core/data/scaler_methods/standard_scaler.hpp"
 
 namespace fs = std::filesystem;
 
@@ -13,24 +12,6 @@ int main(int argc, char** argv) {
   try {
     if (argc > 1) {
       if (fs::exists(argv[1])) {
-        // we need to preprocess dataset because mlpack fails to load csv with
-        // string values
-        // {
-        //   std::ifstream data_stream(argv[1]);
-        //   std::string data_string((std::istreambuf_iterator<char>(data_stream)),
-        //                           std::istreambuf_iterator<char>());
-
-        //   data_string =
-        //       std::regex_replace(data_string, std::regex("Iris-setosa"), "1");
-        //   data_string =
-        //       std::regex_replace(data_string, std::regex("Iris-versicolor"), "2");
-        //   data_string =
-        //       std::regex_replace(data_string, std::regex("Iris-virginica"), "3");
-
-        //   std::ofstream fixed_file("data.csv");
-        //   fixed_file << data_string;
-        // }
-
         arma::mat dataset;
         mlpack::data::DatasetInfo info;
         data::Load(argv[1], dataset, info, /*fail with error*/ true);

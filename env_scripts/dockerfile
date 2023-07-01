@@ -39,6 +39,7 @@ RUN apt-get install -y python3-venv
 RUN pip install pyyaml
 RUN pip install typing
 RUN pip install typing_extensions
+RUN pip install optuna
 
 RUN mkdir development
 ADD checkout_lib.sh /development

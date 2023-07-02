@@ -46,9 +46,7 @@ int main(int /*argc*/, char** /*argv*/) {
   using namespace dlib;
 
   // Generate data
-  Samples samples;
-  Labels labels;
-  std::tie(samples, labels) = GenerateData(1000, 435635);
+  auto [samples, labels] = GenerateData(1000, 435635);
 
   auto mm = std::minmax_element(
       samples.begin(), samples.end(),

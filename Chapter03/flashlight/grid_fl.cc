@@ -21,19 +21,22 @@ fl::Tensor make_samples_polynomial(const fl::Tensor& samples, int polynomial_deg
   return polynomial_samples;
 }
 
-int main(int /*argc*/, char** /*argv*/) {
-  // if (argc < 3) {
-  //   std::cout << "Usage: " << argv[0] << " polynomial_degree regularization_value" << std::endl;
-  //   return 0;
-  // } else {
-  //   int polynomial_degree = std::atoi(argv[1]);
-  //   double regularization_value = std::atof(argv[2]);
-  {
+int main(int argc, char** argv) {
+  if (argc < 3) {
+    std::cout << "Usage: " << argv[0] << " polynomial_degree learning_rate batch_size" << std::endl;
+    return 0;
+  } else {
     // Hyper parameters
-    int polynomial_degree = 14;
-    double learning_rate = 0.045;
+
+    // The best values selected manually
+    // int polynomial_degree = 14;
+    // double learning_rate = 0.045;
+    // int batch_size = 32;
+
+    int polynomial_degree = std::atoi(argv[1]);
+    double learning_rate = std::atof(argv[2]);
+    int batch_size = std::atoi(argv[3]);
     int num_epochs = 300;
-    int batch_size = 32;
 
     // genreate training data
     int num_samples = 1000;
@@ -88,7 +91,7 @@ int main(int /*argc*/, char** /*argv*/) {
       // Mean Squared Error
       error /= batch_dataset->size();
       mse = error.scalar<float>();
-      std::cout << "Epoch: " << e << " learning_rate: " << learning_rate << " MSE: " << mse << std::endl;
+      // std::cout << "Epoch: " << e << " learning_rate: " << learning_rate << " MSE: " << mse << std::endl;
     }
 
     // Plot perdictions
@@ -100,9 +103,16 @@ int main(int /*argc*/, char** /*argv*/) {
     new_poly_samples = (new_poly_samples - samples_mean) / samples_std;
     auto predictions = fl::matmul(fl::transpose(weight.tensor()), new_poly_samples) + bias.tensor();
 
+    std::string plot_file_name = "plot_" +
+                                 std::to_string(polynomial_degree) +
+                                 "_" +
+                                 std::to_string(learning_rate) +
+                                 "_" +
+                                 std::to_string(batch_size) +
+                                 ".png";
     plotcpp::Plot plt;
     plt.SetTerminal("png");
-    plt.SetOutput("plot.png");
+    plt.SetOutput(plot_file_name);
     plt.SetTitle("Polynomial regression");
     plt.SetXLabel("x");
     plt.SetYLabel("y");
@@ -119,6 +129,8 @@ int main(int /*argc*/, char** /*argv*/) {
                plotcpp::Lines(x_pred_coords.begin(), x_pred_coords.end(),
                               y_pred_coords.begin(), "pred", "lc rgb 'red' lw 2"));
     plt.Flush();
+
+    std::cout << mse;
   }
 
   return 0;

@@ -62,8 +62,10 @@ int main(int /*argc*/, char** /*argv*/) {
   arma::dvec new_samples_values = arma::linspace<arma::dvec>(x_minmax.first, x_minmax.second, num_new_samples);
   arma::mat new_samples(1, num_new_samples);
   new_samples.row(0) = arma::trans(new_samples_values);
+  arma::mat norm_new_samples(1, num_new_samples);
+  sample_scaler.Transform(new_samples, norm_new_samples);
   arma::rowvec predictions(num_new_samples);
-  linear_regression.Predict(new_samples, predictions);
+  linear_regression.Predict(norm_new_samples, predictions);
 
   // Plot perdictions
   plotcpp::Plot plt;

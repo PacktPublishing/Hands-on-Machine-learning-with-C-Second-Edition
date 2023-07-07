@@ -6,6 +6,7 @@
 
 # Built Visual Studio Code Extensions
 *.vsix
+*.vscode
 
 # Build folders
 build

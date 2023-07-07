@@ -15,3 +15,9 @@ mkdir build
 cd build/
 cmake cmake -DCMAKE_PREFIX_PATH=/development/libs/ -DPLOTCPP_PATH=$LIBS_DIR/sources/plotcpp/ ..
 cmake --build . --target all
+
+cd $START_DIR/Chapter03/flashlight
+mkdir build
+cd build/
+cmake cmake -DCMAKE_PREFIX_PATH=/development/libs/ -DPLOTCPP_PATH=$LIBS_DIR/sources/plotcpp/ ..
+cmake --build . --target all

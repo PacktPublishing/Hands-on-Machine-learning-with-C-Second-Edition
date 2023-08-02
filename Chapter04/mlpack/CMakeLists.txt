@@ -33,6 +33,6 @@ add_compile_definitions(
 include_directories(${PLOTCPP_PATH})
 include_directories(${MLPACK_INCLUDE_DIR})
 
-add_executable(grid-mlpack "mlpack-cluster.cc")
-target_link_directories(grid-mlpack PRIVATE ${CMAKE_PREFIX_PATH}/lib)
-target_link_libraries(grid-mlpack ${MLPACK_LIBRARIES} armadillo)
+add_executable(mlpack-cluster "mlpack-cluster.cc")
+target_link_directories(mlpack-cluster PRIVATE ${CMAKE_PREFIX_PATH}/lib)
+target_link_libraries(mlpack-cluster ${MLPACK_LIBRARIES} armadillo)

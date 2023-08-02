@@ -1,93 +1,177 @@
 #include <plot.h>
 #include <algorithm>
+#include <filesystem>
 #include <iostream>
 #include <mlpack/core.hpp>
+#include <mlpack/methods/dbscan.hpp>
+#include <mlpack/methods/gmm.hpp>
+#include <mlpack/methods/kmeans.hpp>
+#include <mlpack/methods/mean_shift.hpp>
 
-std::pair<arma::mat, arma::rowvec> GenerateData(size_t num_samples) {
-  arma::mat samples = arma::randn<arma::mat>(1, num_samples);
-  arma::rowvec labels = samples + arma::randn<arma::rowvec>(num_samples, arma::distr_param(1.0, 1.5));
-  return {samples, labels};
-}
+using namespace mlpack;
+namespace fs = std::filesystem;
 
-int main(int /*argc*/, char** /*argv*/) {
-  using namespace mlpack;
+const std::vector<std::string> dataset_names{"dataset0.csv", "dataset1.csv",
+                                             "dataset2.csv", "dataset3.csv",
+                                             "dataset4.csv", "dataset5.csv"};
 
-  size_t num_samples = 1000;
-  auto [raw_samples, raw_labels] = GenerateData(num_samples);
+const std::vector<std::string> colors{"black", "red", "blue", "green",
+                                      "cyan", "yellow", "brown", "magenta"};
 
-  auto mm = std::minmax_element(
-      raw_samples.begin(), raw_samples.end(),
-      [](const auto& a, const auto& b) { return a < b; });
-  std::pair<double, double> x_minmax{*mm.first, *mm.second};
+using DataType = double;
+using Coords = std::vector<DataType>;
+using PointCoords = std::pair<Coords, Coords>;
+using Clusters = std::unordered_map<size_t, PointCoords>;
 
-  // Normalize data
-  data::StandardScaler sample_scaler;
-  sample_scaler.Fit(raw_samples);
-  arma::mat samples(1, num_samples);
-  sample_scaler.Transform(raw_samples, samples);
-
-  data::StandardScaler label_scaler;
-  label_scaler.Fit(raw_labels);
-  arma::rowvec labels(num_samples);
-  label_scaler.Transform(raw_labels, labels);
-
-  // Randomize data
-  arma::mat rand_samples(1, num_samples);
-  arma::rowvec rand_labels(num_samples);
-  ShuffleData(samples, labels, rand_samples, rand_labels);
-
-  // Grid search for the best regularization parameter lambda
-  // Using 80% of data for training and remaining 20% for assessing MSE.
-  double validation_size = 0.2;
-  HyperParameterTuner<LinearRegression, MSE, SimpleCV> parameters_tuner(validation_size,
-                                                                        rand_samples, rand_labels);
-
-  // Finding the best value for lambda from the values 0.0, 0.001, 0.01, 0.1,
-  // and 1.0.
-  arma::vec lambdas{0.0, 0.001, 0.01, 0.1, 1.0};
-  double best_lambda = 0;
-  std::tie(best_lambda) = parameters_tuner.Optimize(lambdas);
-
-  std::cout << "Best lambda: " << best_lambda << std::endl;
-
-  // Train model
-  // double lambda = 0.01;
-  // LinearRegression linear_regression(rand_samples, rand_labels, lambda);
-
-  // Use best model
-  LinearRegression& linear_regression = parameters_tuner.BestModel();
-
-  // Make new perdictions
-  size_t num_new_samples = 50;
-  arma::dvec new_samples_values = arma::linspace<arma::dvec>(x_minmax.first, x_minmax.second, num_new_samples);
-  arma::mat new_samples(1, num_new_samples);
-  new_samples.row(0) = arma::trans(new_samples_values);
-  arma::mat norm_new_samples(1, num_new_samples);
-  sample_scaler.Transform(new_samples, norm_new_samples);
-  arma::rowvec predictions(num_new_samples);
-  linear_regression.Predict(norm_new_samples, predictions);
-
-  // Plot perdictions
+void PlotClusters(const Clusters& clusters,
+                  const std::string& name,
+                  const std::string& file_name) {
   plotcpp::Plot plt;
   plt.SetTerminal("png");
-  plt.SetOutput("plot.png");
-  plt.SetTitle("Linear regression");
+  plt.SetOutput(file_name);
+  plt.SetTitle(name);
   plt.SetXLabel("x");
   plt.SetYLabel("y");
   plt.SetAutoscale();
   plt.GnuplotCommand("set grid");
 
-  std::vector<double> x_coords(samples.size());
-  std::copy(samples.begin(), samples.end(), x_coords.begin());
+  auto draw_state = plt.StartDraw2D<Coords::const_iterator>();
+  for (auto& cluster : clusters) {
+    std::stringstream params;
+    params << "lc rgb '" << colors[cluster.first] << "' pt 7";
+    plt.AddDrawing(draw_state,
+                   plotcpp::Points(
+                       cluster.second.first.begin(), cluster.second.first.end(),
+                       cluster.second.second.begin(),
+                       std::to_string(cluster.first) + " cls", params.str()));
+  }
 
-  std::vector<double> x_pred_coords(new_samples.size());
-  std::copy(new_samples.begin(), new_samples.end(), x_pred_coords.begin());
-
-  plt.Draw2D(plotcpp::Points(x_coords.begin(), x_coords.end(),
-                             labels.begin(), "orig", "lc rgb 'black' pt 7"),
-             plotcpp::Lines(x_pred_coords.begin(), x_pred_coords.end(),
-                            predictions.begin(), "pred", "lc rgb 'red' lw 2"));
+  plt.EndDraw2D(draw_state);
   plt.Flush();
+}
 
-  return 0;
+void DoKMeansClustering(const arma::mat& inputs,
+                        size_t num_clusters,
+                        const std::string& name) {
+  arma::Row<size_t> assignments;
+  KMeans<> kmeans;
+  kmeans.Cluster(inputs, num_clusters, assignments);
+
+  std::vector<unsigned long> clusters;
+  Clusters plot_clusters;
+  for (size_t i = 0; i != inputs.n_cols; ++i) {
+    auto cluser_idx = assignments[i];
+    plot_clusters[cluser_idx].first.push_back(inputs.at(0, i));
+    plot_clusters[cluser_idx].second.push_back(inputs.at(1, i));
+  }
+
+  PlotClusters(plot_clusters, "K-Means", name + "-kmeans.png");
+}
+
+void DoDBScanClustering(const arma::mat& inputs,
+                        const std::string& name) {
+  arma::Row<size_t> assignments;
+
+  DBSCAN<> dbscan(/*epsilon*/ 0.1, /*min_points*/ 15);
+  dbscan.Cluster(inputs, assignments);
+
+  std::vector<unsigned long> clusters;
+  Clusters plot_clusters;
+  for (size_t i = 0; i != inputs.n_cols; ++i) {
+    auto cluser_idx = assignments[i];
+    if (cluser_idx < colors.size()) {
+      plot_clusters[cluser_idx].first.push_back(inputs.at(0, i));
+      plot_clusters[cluser_idx].second.push_back(inputs.at(1, i));
+    }
+  }
+
+  PlotClusters(plot_clusters, "DBDScan", name + "-dbscan.png");
+}
+
+void DoMeanShiftClustering(const arma::mat& inputs,
+                           const std::string& name) {
+  arma::Row<size_t> assignments;
+  arma::mat centroids;
+
+  MeanShift<> mean_shift;
+  auto radius = mean_shift.EstimateRadius(inputs);
+  mean_shift.Radius(radius);
+  mean_shift.Cluster(inputs, assignments, centroids);
+
+  std::vector<unsigned long> clusters;
+  Clusters plot_clusters;
+  for (size_t i = 0; i != inputs.n_cols; ++i) {
+    auto cluser_idx = assignments[i];
+    plot_clusters[cluser_idx].first.push_back(inputs.at(0, i));
+    plot_clusters[cluser_idx].second.push_back(inputs.at(1, i));
+  }
+
+  PlotClusters(plot_clusters, "MeanShift", name + "-mean-shift.png");
+}
+
+void DoGMMClustering(const arma::mat& inputs,
+                     size_t num_clusters,
+                     const std::string& name) {
+  GMM gmm(num_clusters, /*dimensionality*/ 2);
+  KMeans<> kmeans;
+  size_t max_iterations = 250;
+  double tolerance = 1e-10;
+  EMFit<KMeans<>, NoConstraint> em(max_iterations, tolerance, kmeans);
+  gmm.Train(inputs, /*trials*/ 3, /*use_existing_model*/ false, em);
+
+  arma::Row<size_t> assignments;
+  gmm.Classify(inputs, assignments);
+
+  std::vector<unsigned long> clusters;
+  Clusters plot_clusters;
+  for (size_t i = 0; i != inputs.n_cols; ++i) {
+    auto cluser_idx = assignments[i];
+    plot_clusters[cluser_idx].first.push_back(inputs.at(0, i));
+    plot_clusters[cluser_idx].second.push_back(inputs.at(1, i));
+  }
+
+  PlotClusters(plot_clusters, "GMM", name + "-gmm.png");
+}
+
+int main(int argc, char** argv) {
+  if (argc > 1) {
+    auto base_dir = fs::path(argv[1]);
+    for (auto& dataset_name : dataset_names) {
+      auto dataset_full_name = base_dir / dataset_name;
+      if (fs::exists(dataset_full_name)) {
+        arma::mat dataset;
+        mlpack::data::DatasetInfo info;
+        // by default dataset will be loaded trasposed
+        data::Load(dataset_full_name, dataset, info, /*fail with error*/ true);
+
+        arma::Row<size_t> labels;
+        labels = arma::conv_to<arma::Row<size_t>>::from(dataset.row(dataset.n_rows - 1));
+        // remove label row
+        dataset.shed_row(dataset.n_rows - 1);
+        // remove index row
+        dataset.shed_row(0);
+
+        auto num_samples = dataset.n_cols;
+        auto num_features = dataset.n_rows;
+        std::size_t num_clusters =
+            std::set<double>(labels.begin(), labels.end()).size();
+        if (num_clusters < 2)
+          num_clusters = 3;
+
+        std::cout << dataset_name << "\n"
+                  << "Num samples: " << num_samples
+                  << " num features: " << num_features
+                  << " num clusters: " << num_clusters << std::endl;
+
+        // DoKMeansClustering(dataset, num_clusters, dataset_name);
+        // DoDBScanClustering(dataset, dataset_name);
+        // DoMeanShiftClustering(dataset, dataset_name);
+        DoGMMClustering(dataset, num_clusters, dataset_name);
+
+      } else {
+        std::cerr << "Dataset file " << dataset_name << " missed\n";
+      }
+    }
+    return 0;
+  }
 }

@@ -38,12 +38,13 @@ void PlotClusters(const Clusters& clusters,
   auto draw_state = plt.StartDraw2D<Coords::const_iterator>();
   for (auto& cluster : clusters) {
     std::stringstream params;
-    params << "lc rgb '" << colors[cluster.first] << "' pt 7";
+    auto color_index = cluster.first % colors.size();
+    params << "lc rgb '" << colors[color_index] << "' pt 7";
     plt.AddDrawing(draw_state,
                    plotcpp::Points(
                        cluster.second.first.begin(), cluster.second.first.end(),
                        cluster.second.second.begin(),
-                       std::to_string(cluster.first) + " cls", params.str()));
+                       std::to_string(color_index) + " cls", params.str()));
   }
 
   plt.EndDraw2D(draw_state);
@@ -57,7 +58,6 @@ void DoKMeansClustering(const arma::mat& inputs,
   KMeans<> kmeans;
   kmeans.Cluster(inputs, num_clusters, assignments);
 
-  std::vector<unsigned long> clusters;
   Clusters plot_clusters;
   for (size_t i = 0; i != inputs.n_cols; ++i) {
     auto cluser_idx = assignments[i];
@@ -75,11 +75,10 @@ void DoDBScanClustering(const arma::mat& inputs,
   DBSCAN<> dbscan(/*epsilon*/ 0.1, /*min_points*/ 15);
   dbscan.Cluster(inputs, assignments);
 
-  std::vector<unsigned long> clusters;
   Clusters plot_clusters;
   for (size_t i = 0; i != inputs.n_cols; ++i) {
     auto cluser_idx = assignments[i];
-    if (cluser_idx < colors.size()) {
+    if (cluser_idx != SIZE_MAX) {
       plot_clusters[cluser_idx].first.push_back(inputs.at(0, i));
       plot_clusters[cluser_idx].second.push_back(inputs.at(1, i));
     }
@@ -98,7 +97,6 @@ void DoMeanShiftClustering(const arma::mat& inputs,
   mean_shift.Radius(radius);
   mean_shift.Cluster(inputs, assignments, centroids);
 
-  std::vector<unsigned long> clusters;
   Clusters plot_clusters;
   for (size_t i = 0; i != inputs.n_cols; ++i) {
     auto cluser_idx = assignments[i];
@@ -122,7 +120,6 @@ void DoGMMClustering(const arma::mat& inputs,
   arma::Row<size_t> assignments;
   gmm.Classify(inputs, assignments);
 
-  std::vector<unsigned long> clusters;
   Clusters plot_clusters;
   for (size_t i = 0; i != inputs.n_cols; ++i) {
     auto cluser_idx = assignments[i];
@@ -163,9 +160,9 @@ int main(int argc, char** argv) {
                   << " num features: " << num_features
                   << " num clusters: " << num_clusters << std::endl;
 
-        // DoKMeansClustering(dataset, num_clusters, dataset_name);
-        // DoDBScanClustering(dataset, dataset_name);
-        // DoMeanShiftClustering(dataset, dataset_name);
+        DoKMeansClustering(dataset, num_clusters, dataset_name);
+        DoDBScanClustering(dataset, dataset_name);
+        DoMeanShiftClustering(dataset, dataset_name);
         DoGMMClustering(dataset, num_clusters, dataset_name);
 
       } else {

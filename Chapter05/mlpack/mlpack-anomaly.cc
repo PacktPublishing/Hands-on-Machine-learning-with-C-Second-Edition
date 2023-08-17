@@ -3,8 +3,9 @@
 #include <filesystem>
 #include <iostream>
 #include <mlpack/core.hpp>
+#include <mlpack/methods/det/dtree.hpp>
 #include <mlpack/methods/gmm.hpp>
-#include <mlpack/methods/linear_svm.hpp>
+#include <mlpack/methods/kde.hpp>
 
 using namespace mlpack;
 namespace fs = std::filesystem;
@@ -79,6 +80,85 @@ void MultivariateGaussianDist(const arma::mat& normal,
   PlotClusters(plot_clusters, "Multivariate Gaussian Distribution", file_name);
 }
 
+void KernelDensityEstimation(const arma::mat& normal,
+                             const arma::mat& test,
+                             const std::string& file_name) {
+  KDE<GaussianKernel,
+      EuclideanDistance,
+      arma::mat,
+      KDTree>
+      kde(/*rel error*/ 0.0, /*abs error*/ 0.01, GaussianKernel());
+  kde.Train(normal);
+
+  // change this parameter to see descision boundary
+  double density_threshold = 0.1;
+
+  Clusters plot_clusters;
+  auto detect = [&](const arma::mat& samples) {
+    arma::vec estimations;
+    kde.Evaluate(samples, estimations);
+
+    for (size_t c = 0; c < samples.n_cols; ++c) {
+      auto sample = samples.col(c);
+      double x = sample.at(0, 0);
+      double y = sample.at(1, 0);
+      auto p = estimations.at(c);
+      if (p >= density_threshold) {
+        plot_clusters[0].first.push_back(x);
+        plot_clusters[0].second.push_back(y);
+      } else {
+        plot_clusters[1].first.push_back(x);
+        plot_clusters[1].second.push_back(y);
+      }
+    }
+  };
+  detect(normal);
+  detect(test);
+  PlotClusters(plot_clusters, "Kernel Density Estimation", file_name);
+}
+
+void DensityEstimationTree(const arma::mat& normal,
+                           const arma::mat& test,
+                           const std::string& file_name) {
+  // make a copy of the original data because points in the dataset can be reordered
+  arma::mat data_copy = normal;
+  DTree<> det(data_copy);
+
+  // store the original order of the data
+  arma::Col<size_t> data_indices(data_copy.n_cols);
+  for (size_t i = 0; i < data_copy.n_cols; i++) {
+    data_indices[i] = i;
+  }
+
+  size_t max_leaf_size = 5;
+  size_t min_leaf_size = 1;
+  det.Grow(data_copy, data_indices, false, max_leaf_size, min_leaf_size);
+
+  // change this parameter to see descision boundary
+  double density_threshold = 0.01;
+
+  Clusters plot_clusters;
+
+  auto detect = [&](const arma::mat& samples) {
+    for (size_t c = 0; c < samples.n_cols; ++c) {
+      auto sample = samples.col(c);
+      double x = sample.at(0, 0);
+      double y = sample.at(1, 0);
+      auto p = det.ComputeValue(sample);
+      if (p >= density_threshold) {
+        plot_clusters[0].first.push_back(x);
+        plot_clusters[0].second.push_back(y);
+      } else {
+        plot_clusters[1].first.push_back(x);
+        plot_clusters[1].second.push_back(y);
+      }
+    }
+  };
+  detect(normal);
+  detect(test);
+  PlotClusters(plot_clusters, "Density Estimation Tree", file_name);
+}
+
 using Dataset = std::pair<arma::mat, arma::mat>;
 
 Dataset LoadDataset(const fs::path& file_path) {
@@ -107,7 +187,10 @@ int main(int argc, char** argv) {
 
     MultivariateGaussianDist(dataset_multi.first, dataset_multi.second,
                              "mlpack-multi-var.png");
-    // OneClassSvm(dataset_multi.first, dataset_multi.second, "dlib-ocsvm.png");
+    KernelDensityEstimation(dataset_multi.first, dataset_multi.second,
+                            "mlpack-kde.png");
+    DensityEstimationTree(dataset_multi.first, dataset_multi.second,
+                          "mlpack-det.png");
 
   } else {
     std::cerr << "Please provider path to the datasets folder\n";

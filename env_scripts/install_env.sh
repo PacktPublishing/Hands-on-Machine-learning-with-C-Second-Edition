@@ -58,7 +58,8 @@ mkdir -p libs/sources
 # fast-cpp-csv-parser
 . ./checkout_lib.sh https://github.com/ben-strasser/fast-cpp-csv-parser 4ade42d5f8c454c6c57b3dce9c51c6dd02182a66
 
-
+# tapkee
+. ./install_lib.sh https://github.com/lisitsyn/tapkee ba5f052d2548ec03dcc6a4ac0ed8deeb79f1d43a -DBUILD_TESTS=OFF
 
 # return back
 cd $DEV_DIR

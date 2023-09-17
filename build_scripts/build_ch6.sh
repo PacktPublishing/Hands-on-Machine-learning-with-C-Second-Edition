@@ -10,8 +10,8 @@ cd build/
 cmake cmake -DCMAKE_PREFIX_PATH=/development/libs/ -DPLOTCPP_PATH=$LIBS_DIR/sources/plotcpp/ ..
 cmake --build . --target all
 
-# cd $START_DIR/Chapter06/tapkee
-# mkdir build
-# cd build/
-# cmake cmake -DCMAKE_PREFIX_PATH=/development/libs/ -DPLOTCPP_PATH=$LIBS_DIR/sources/plotcpp/ ..
-# cmake --build . --target all
+cd $START_DIR/Chapter06/tapkee
+mkdir build
+cd build/
+cmake cmake -DCMAKE_PREFIX_PATH=/development/libs/ -DTAPKEE_PATH=/development/libs/include/tapkee/ -DPLOTCPP_PATH=$LIBS_DIR/sources/plotcpp/ ..
+cmake --build . --target all

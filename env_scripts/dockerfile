@@ -10,8 +10,17 @@ RUN apt-get install -y unzip
 RUN apt-get install -y build-essential
 RUN apt-get install -y gdb
 RUN apt-get install -y git
-RUN apt-get install -y cmake
-RUN apt-get install -y cmake-curses-gui
+RUN apt-get install -y libfmt-dev
+
+RUN wget https://github.com/Kitware/CMake/releases/download/v3.27.5/cmake-3.27.5-Linux-x86_64.sh \
+      -q -O /tmp/cmake-install.sh \
+      && chmod u+x /tmp/cmake-install.sh \
+      && mkdir /usr/bin/cmake \
+      && /tmp/cmake-install.sh --skip-license --prefix=/usr/bin/cmake \
+      && rm /tmp/cmake-install.sh
+
+ENV PATH="/usr/bin/cmake/bin:${PATH}"
+
 RUN apt-get install -y python3
 RUN apt-get install -y python3-pip
 RUN apt-get install -y libblas-dev

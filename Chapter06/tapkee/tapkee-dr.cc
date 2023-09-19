@@ -162,6 +162,13 @@ int main(int argc, char** argv) {
 
       int target_dim = 2;
       using namespace tapkee;
+
+      Reduction((method = FactorAnalysis,
+                 target_dimension = target_dim,
+                 fa_epsilon = 1e-5,
+                 max_iteration = 100),
+                false, input_data, labels_data, "fa-tapkee.png");
+
       Reduction((method = tDistributedStochasticNeighborEmbedding,
                  target_dimension = target_dim,
                  sne_perplexity = 30),
@@ -184,9 +191,6 @@ int main(int argc, char** argv) {
                  target_dimension = target_dim),
                 false, input_data, labels_data, "mds-tapkee.png");
 
-      Reduction((method = FactorAnalysis,
-                 target_dimension = target_dim),
-                false, input_data, labels_data, "fa-tapkee.png");
     } else {
       std::cerr << "Dataset file " << data_file_path << " missed\n";
     }

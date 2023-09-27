@@ -7,17 +7,17 @@ LIBS_DIR=/development/libs
 cd $START_DIR/Chapter07/dlib
 mkdir build
 cd build/
-cmake cmake -DCMAKE_PREFIX_PATH=/development/libs/ -DPLOTCPP_PATH=$LIBS_DIR/sources/plotcpp/ ..
+cmake -DCMAKE_PREFIX_PATH=$LIBS_DIR -DPLOTCPP_PATH=$LIBS_DIR/sources/plotcpp/ ..
 cmake --build . --target all
 
 cd $START_DIR/Chapter07/mlpack
 mkdir build
 cd build/
-cmake cmake -DCMAKE_PREFIX_PATH=/development/libs/ -DPLOTCPP_PATH=$LIBS_DIR/sources/plotcpp/ ..
+cmake -DCMAKE_PREFIX_PATH=$LIBS_DIR -DPLOTCPP_PATH=$LIBS_DIR/sources/plotcpp/ ..
 cmake --build . --target all
 
 cd $START_DIR/Chapter07/flashlight
 mkdir build
 cd build/
-cmake cmake -DCMAKE_PREFIX_PATH=/development/libs/ -DPLOTCPP_PATH=$LIBS_DIR/sources/plotcpp/ -DCSV_LIB_PATH=$LIBS_DIR/sources/fast-cpp-csv-parser/ ..
+cmake -DCMAKE_PREFIX_PATH=$LIBS_DIR -DPLOTCPP_PATH=$LIBS_DIR/sources/plotcpp/ -DCSV_LIB_PATH=$LIBS_DIR/sources/fast-cpp-csv-parser/ ..
 cmake --build . --target all

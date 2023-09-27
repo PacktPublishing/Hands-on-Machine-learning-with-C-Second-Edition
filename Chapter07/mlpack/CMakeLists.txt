@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(mlpack-sample)
+project(mlpack-classify)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 find_package(mlpack 4.0.1 REQUIRED)
@@ -33,6 +33,6 @@ add_compile_definitions(
 include_directories(${PLOTCPP_PATH})
 include_directories(${MLPACK_INCLUDE_DIR})
 
-add_executable(grid-mlpack "grid-mlpack.cc")
-target_link_directories(grid-mlpack PRIVATE ${CMAKE_PREFIX_PATH}/lib)
-target_link_libraries(grid-mlpack ${MLPACK_LIBRARIES} armadillo)
+add_executable(mlpack-classify "mlpack-classify.cc")
+target_link_directories(mlpack-classify PRIVATE ${CMAKE_PREFIX_PATH}/lib)
+target_link_libraries(mlpack-classify ${MLPACK_LIBRARIES} armadillo)

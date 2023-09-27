@@ -132,13 +132,13 @@ int main(int argc, char** argv) {
 
         auto num_samples = inputs.nr();
         auto num_features = inputs.nc();
-        std::size_t num_clusters =
+        std::size_t num_classes =
             std::set<double>(outputs.begin(), outputs.end()).size();
 
         std::cout << dataset << "\n"
                   << "Num samples: " << num_samples
                   << " num features: " << num_features
-                  << " num clusters: " << num_clusters << std::endl;
+                  << " num classes: " << num_classes << std::endl;
 
         // split data set to the train and test parts
         long test_num = 300;

@@ -233,7 +233,7 @@ int main(int argc, char** argv) {
                 finish_time - start_time)
                 .count();
 
-        std::cout << "Initeration " << k << " weighted mse " << w_mse
+        std::cout << "Iteration " << k << " weighted mse " << w_mse
                   << " time " << elapsed_seconds << std::endl;
       }
       std::cout << "Learning done" << std::endl;

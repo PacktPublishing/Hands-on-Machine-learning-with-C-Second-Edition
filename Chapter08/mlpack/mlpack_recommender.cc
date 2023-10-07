@@ -1,6 +1,6 @@
 #include "../eigen/data_loader.h"
 
-#include <experimental/filesystem>
+#include <filesystem>
 #include <iostream>
 
 #include <mlpack/core.hpp>
@@ -8,7 +8,7 @@
 #include <mlpack/methods/cf/cf.hpp>
 #include <mlpack/methods/cf/decomposition_policies/batch_svd_method.hpp>
 
-namespace fs = std::experimental::filesystem;
+namespace fs = std::filesystem;
 using DataType = double;
 
 int main(int argc, char** argv) {
@@ -69,25 +69,24 @@ int main(int argc, char** argv) {
 
     // Non negative matrix factorization  with Alternating Least Squares
     // approach
-    mlpack::cf::NMFPolicy decomposition_policy;
+    mlpack::NMFPolicy decomposition_policy;
 
-    // mlpack::cf::BatchSVDPolicy decomposition_policy;
+    // mlpack::BatchSVDPolicy decomposition_policy;
 
     // stoping criterions
     size_t max_iterations = 20;
     double min_residue = 1e-3;
 
     std::cout << "Training..." << std::endl;
-    mlpack::cf::CFType cf(ratings_matrix, decomposition_policy, neighborhood,
-                          n_factors, max_iterations, min_residue);
+    mlpack::CFType cf(ratings_matrix, decomposition_policy, neighborhood,
+                      n_factors, max_iterations, min_residue);
 
     std::cout << "Training done" << std::endl;
 
     std::cout << "Predicting..." << std::endl;
     arma::Mat<size_t> recommendations;
     // Get 5 recommendations for specified users.
-    arma::Col<size_t> users;
-    users << 1 << 2 << 3;
+    arma::Col<size_t> users{1, 2, 3};
 
     cf.GetRecommendations(5, recommendations, users);
     std::cout << "Predicting done" << std::endl;

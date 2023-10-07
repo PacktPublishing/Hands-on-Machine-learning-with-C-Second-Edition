@@ -1,30 +1,30 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.10)
 project(mlpack-recommender)
 
-set(MLPACK_PATH "" CACHE PATH "path to mlpack install dir")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+find_package(mlpack 4.0.1 REQUIRED)
 
-if (NOT MLPACK_PATH)
-  message(FATAL_ERROR "Missigng mlpack install path, please specify MLPACK_PATH")
-else()
-  message("mlpack path is ${MLPACK_PATH}")
-endif()
-
-set(CMAKE_VERBOSE_MAKEFILE ON)
-
-set(Boost_USE_STATIC_LIBS ON)
-set(Boost_USE_STATIC_RUNTIME ON)
 find_package(Boost REQUIRED serialization)
 
-set(CMAKE_CXX_FLAGS "-std=c++17 -msse3 -fopenmp -Wall -Wextra -Wno-unused-parameter")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
-set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-include_directories(${MLPACK_PATH}/include)
-link_directories(${MLPACK_PATH}/lib)
-link_directories(${MLPACK_PATH}/lib64)
+add_compile_options(
+       -Wall -Wextra -msse3 -fopenmp
+       $<$<CONFIG:RELEASE>:-Ofast>
+       $<$<CONFIG:DEBUG>:-O0>
+       $<$<CONFIG:DEBUG>:-ggdb3>
+)
 
-set(SOURCES mlpack-recommender.cc)
+add_link_options(-fopenmp)
 
-add_executable(mlpack-recommender ${SOURCES})
-target_link_libraries(mlpack-recommender mlpack armadillo cblas lapack ${Boost_LIBRARIES} stdc++fs )
+add_compile_definitions(
+        $<$<CONFIG:RELEASE>:NDEBUG>
+)
 
+include_directories(${MLPACK_INCLUDE_DIR})
+
+add_executable(mlpack-recommender "mlpack_recommender.cc")
+target_link_directories(mlpack-recommender PRIVATE ${CMAKE_PREFIX_PATH}/lib)
+target_link_libraries(mlpack-recommender ${MLPACK_LIBRARIES} ${Boost_LIBRARIES} armadillo)

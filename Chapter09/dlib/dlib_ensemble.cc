@@ -34,37 +34,45 @@ void PlotResults(const DataSamples& test_features,
   plt.Flush();
 }
 
-std::pair<Samples, Labels> GenerateData(DataType start,
-                                        DataType end,
-                                        size_t n,
-                                        bool noise) {
+std::pair<Samples, Labels> GenerateNoise(DataType start,
+                                         DataType end,
+                                         size_t n) {
   Samples x;
   x.resize(n);
   Labels y;
   y.resize(n);
 
-  if (noise) {
-    std::mt19937 re(3467);
-    std::uniform_real_distribution<DataType> dist(start, end);
-    std::normal_distribution<DataType> noise_dist;
+  std::mt19937 re(3467);
+  std::uniform_real_distribution<DataType> dist(start, end);
+  std::normal_distribution<DataType> noise_dist;
 
-    for (size_t i = 0; i < n; ++i) {
-      auto x_val = dist(re);
-      auto y_val = std::cos(M_PI * x_val) + (noise_dist(re) * 0.3);
-      x[i] = SampleType({x_val});
-      y[i] = y_val;
-    }
-  } else {
-    auto step = (end - start) / (n - 1);
-    auto x_val = start;
-    size_t i = 0;
-    for (auto& x_item : x) {
-      x_item = SampleType({x_val});
-      auto y_val = std::cos(M_PI * x_val);
-      y[i] = y_val;
-      x_val += step;
-      ++i;
-    }
+  for (size_t i = 0; i < n; ++i) {
+    auto x_val = dist(re);
+    auto y_val = std::cos(M_PI * x_val) + (noise_dist(re) * 0.3);
+    x[i] = SampleType({x_val});
+    y[i] = y_val;
+  }
+
+  return {x, y};
+}
+
+std::pair<Samples, Labels> GenerateData(DataType start,
+                                        DataType end,
+                                        size_t n) {
+  Samples x;
+  x.resize(n);
+  Labels y;
+  y.resize(n);
+
+  auto step = (end - start) / (n - 1);
+  auto x_val = start;
+  size_t i = 0;
+  for (auto& x_item : x) {
+    x_item = SampleType({x_val});
+    auto y_val = std::cos(M_PI * x_val);
+    y[i] = y_val;
+    x_val += step;
+    ++i;
   }
 
   return {x, y};
@@ -82,13 +90,13 @@ int main() {
   trainer.set_num_trees(num_trees);
   trainer.set_seed("random forest");
 
-  auto [train_samples, train_lables] = GenerateData(start, end, num_samples, true);
+  auto [train_samples, train_lables] = GenerateNoise(start, end, num_samples);
   auto random_forest = trainer.train(train_samples, train_lables);
 
   DataSamples data_samples(num_samples);
   Labels pred_lables(num_samples);
   size_t i = 0;
-  auto [test_samples, test_lables] = GenerateData(start, end, num_samples, false);
+  auto [test_samples, test_lables] = GenerateData(start, end, num_samples);
   for (const auto& sample : test_samples) {
     auto prediction = random_forest(sample);
     data_samples[i] = sample(0);

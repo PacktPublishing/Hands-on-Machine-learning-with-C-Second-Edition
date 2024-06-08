@@ -11,6 +11,9 @@
 # Build folders
 build
 
+# data folders
+data
+
 # Prerequisites
 *.d
 

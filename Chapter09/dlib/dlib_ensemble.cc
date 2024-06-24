@@ -34,9 +34,9 @@ void PlotResults(const DataSamples& test_features,
   plt.Flush();
 }
 
-std::pair<Samples, Labels> GenerateNoise(DataType start,
-                                         DataType end,
-                                         size_t n) {
+std::pair<Samples, Labels> GenerateNoiseData(DataType start,
+                                             DataType end,
+                                             size_t n) {
   Samples x;
   x.resize(n);
   Labels y;
@@ -90,7 +90,7 @@ int main() {
   trainer.set_num_trees(num_trees);
   trainer.set_seed("random forest");
 
-  auto [train_samples, train_lables] = GenerateNoise(start, end, num_samples);
+  auto [train_samples, train_lables] = GenerateNoiseData(start, end, num_samples);
   auto random_forest = trainer.train(train_samples, train_lables);
 
   DataSamples data_samples(num_samples);

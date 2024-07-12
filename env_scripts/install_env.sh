@@ -35,13 +35,13 @@ mkdir -p libs/sources
 . ./install_lib.sh https://github.com/nlohmann/json.git v3.11.2 -DJSON_BuildTests=OFF
 
 # mlpack
-. ./install_lib.sh https://github.com/mlpack/mlpack 4.0.1 -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_TESTS=OFF -DDOWNLOAD_DEPENDENCIES=ON
+. ./install_lib.sh https://github.com/mlpack/mlpack 4.4.0 -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_TESTS=OFF -DDOWNLOAD_DEPENDENCIES=ON
 
 # Eigen
 . ./install_lib.sh https://gitlab.com/libeigen/eigen.git 3.4.0
 
 # PyTorch
-. ./install_lib.sh https://github.com/pytorch/pytorch v1.13.1 -DBUILD_PYTHON=OFF -DONNX_NAMESPACE=onnx_torch
+. ./install_lib.sh https://github.com/pytorch/pytorch v2.3.1 -DBUILD_PYTHON=OFF -DONNX_NAMESPACE=onnx_torch
 
 # ONNX
 . ./install_lib.sh https://github.com/onnx/onnx.git v1.13.1 -DONNX_NAMESPACE=onnx_torch

@@ -34,11 +34,11 @@ int main() {
   ConstInitialization init(0.);
   FFN<MeanSquaredError, ConstInitialization> model(loss, init);
   model.Add<Linear>(8);
-  model.Add<TanH>();
+  model.Add<ReLU>();
   model.Add<Linear>(16);
-  model.Add<TanH>();
+  model.Add<ReLU>();
   model.Add<Linear>(32);
-  model.Add<TanH>();
+  model.Add<ReLU>();
   model.Add<Linear>(1);
 
   // Define optimizer
@@ -48,6 +48,7 @@ int main() {
                              /*maxIterations= */ epochs * x.n_cols,
                              /*tolerance=*/1e-10,
                              /*shuffle=*/false);
+                             
 
   ens::StoreBestCoordinates<arma::mat> best_params;
 

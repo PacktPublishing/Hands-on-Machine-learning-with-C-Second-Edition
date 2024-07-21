@@ -27,8 +27,6 @@ int main() {
   arma::mat x = arma::randn(n).t();
   arma::mat y = x * 0.3f + 0.4f;
 
-  // Define model
-
   // Define optimizer
   ens::Adam optimizer;
 

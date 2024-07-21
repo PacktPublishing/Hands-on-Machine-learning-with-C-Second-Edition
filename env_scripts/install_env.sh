@@ -41,10 +41,7 @@ mkdir -p libs/sources
 . ./install_lib.sh https://gitlab.com/libeigen/eigen.git 3.4.0
 
 # PyTorch
-. ./install_lib.sh https://github.com/pytorch/pytorch v2.3.1 -DBUILD_PYTHON=OFF -DONNX_NAMESPACE=onnx_torch
-
-# ONNX
-. ./install_lib.sh https://github.com/onnx/onnx.git v1.13.1 -DONNX_NAMESPACE=onnx_torch
+. ./install_lib.sh https://github.com/pytorch/pytorch v2.3.1 -DBUILD_PYTHON=OFF 
 
 # HighFive
 . ./install_lib.sh https://github.com/BlueBrain/HighFive v2.7.0
@@ -60,6 +57,9 @@ mkdir -p libs/sources
 
 # tapkee
 . ./install_lib.sh https://github.com/lisitsyn/tapkee ba5f052d2548ec03dcc6a4ac0ed8deeb79f1d43a -DBUILD_TESTS=OFF
+
+# onnxruntime
+. ./install_lib_custom.sh https://github.com/Microsoft/onnxruntime.git v1.18.1 "./build.sh --config RelWithDebInfo --build_shared_lib --parallel --compile_no_warning_as_error --skip_submodule_sync --allow_running_as_root --skip_tests --cmake_extra_defines CMAKE_INSTALL_PREFIX=/development/libs/ --cmake_extra_defines nnxruntime_BUILD_UNIT_TESTS=OFF --target install"
 
 # return back
 cd $DEV_DIR

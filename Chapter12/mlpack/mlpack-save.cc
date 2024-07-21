@@ -37,7 +37,7 @@ int main() {
   data::Save("model.bin", model.Parameters(), true);
 
   auto new_model = make_model();
-  data::Load("model.bin", new_model.Parameters());
+  data::Load("model.bin", new_model.Parameters(), true);
 
   arma::mat predictions;
   new_model.Predict(x, predictions);

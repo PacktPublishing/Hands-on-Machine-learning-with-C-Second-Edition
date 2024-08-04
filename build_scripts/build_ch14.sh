@@ -23,3 +23,5 @@ cp $ANDROID_PYTORCH_DIR/lib/libtorch.so app/src/main/jniLibs/arm64-v8a/
 
 # Find resulting APK file in the Chapter14/android_classify/app/build/outputs/apk/release/ folder
 # Notice that this script may fail if you run it into Docker container under Windows platform
+
+# If you change build directories please update "pytorchDir" and "opencvDir variables in the build.gradle for the app

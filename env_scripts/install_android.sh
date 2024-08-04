@@ -6,6 +6,9 @@ START_DIR=$(pwd)
 mkdir $START_DIR/android
 cd $START_DIR/android
 
+wget https://github.com/opencv/opencv/releases/download/4.10.0/opencv-4.10.0-android-sdk.zip
+unzip opencv-4.10.0-android-sdk.zip
+
 wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
 unzip commandlinetools-linux-9477386_latest.zip
 
@@ -34,8 +37,5 @@ $START_DIR/android/pytorch/scripts/build_android.sh \
 
 # don't forget to upadte android project gradle local.properties file with next variables:
 # sdk.dir=$START_DIR/android/
-# pytorch.dir=$START_DIR/android/pytorch/build_android/install
-# and copy pytorch shared libraries
-# cp $START_DIR/android/pytorch/build_android/install/lib/*.so app/src/main/jniLibs/armeabi-v7a/
 # build app with './gradlew build' command
 

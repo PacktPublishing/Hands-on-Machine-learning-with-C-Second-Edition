@@ -3,8 +3,8 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
 }
 
-val pytorchDir = "/home/kirill/development/android/pytorch/build_android/install/"
-val opencvDir = "/home/kirill/development/android/OpenCV-android-sdk/sdk/native/jni/"
+val pytorchDir = "/development/android/pytorch/build_android/install/"
+val opencvDir = "/development/android/OpenCV-android-sdk/sdk/native/jni/"
 
 
 android {

@@ -51,6 +51,10 @@ RUN pip install pyyaml
 RUN pip install typing
 RUN pip install typing_extensions
 RUN pip install optuna
+RUN pip install pytorch==2.3.1
+RUN pip install transformers
+
+
 
 RUN mkdir development
 ADD checkout_lib.sh /development

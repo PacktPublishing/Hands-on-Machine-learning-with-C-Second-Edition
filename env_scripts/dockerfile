@@ -53,6 +53,7 @@ RUN pip install typing_extensions
 RUN pip install optuna
 RUN pip install pytorch==2.3.1
 RUN pip install transformers
+RUN pip install mlflow=2.15.0
 
 
 

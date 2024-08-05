@@ -34,6 +34,7 @@ mkdir -p libs/sources
 # NlohmanJson
 . ./install_lib.sh https://github.com/nlohmann/json.git v3.11.2 -DJSON_BuildTests=OFF
 
+
 # mlpack
 . ./install_lib.sh https://github.com/mlpack/mlpack 4.4.0 -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_TESTS=OFF -DDOWNLOAD_DEPENDENCIES=ON
 
@@ -47,7 +48,7 @@ mkdir -p libs/sources
 . ./install_lib.sh https://github.com/BlueBrain/HighFive v2.7.0
 
 # cpp-httplib
-. ./install_lib.sh https://github.com/yhirose/cpp-httplib v0.12.1
+. ./install_lib.sh https://github.com/yhirose/cpp-httplib v0.16.0
 
 # PlotCpp
 . ./checkout_lib.sh https://github.com/Kolkir/plotcpp c86bd4f5d9029986f0d5f368450d79f0dd32c7e4

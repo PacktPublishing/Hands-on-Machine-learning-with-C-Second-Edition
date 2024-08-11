@@ -86,8 +86,8 @@ int main(int argc, char** argv) {
                     << " | Loss: " << loss.item<float>() << " | Acc: " << acc << std::endl;
         }
       }
-      return 0;
     }
+    return 0;
   }
 
   std::cerr << "Please specify dataset folder, vocablary file path, and model file path\n";

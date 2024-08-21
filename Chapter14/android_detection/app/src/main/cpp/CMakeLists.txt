@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.22.1)
 project("object-detection")
 
 set(CMAKE_VERBOSE_MAKEFILE on)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 # find_package can be used only if you have protobuf installed
 # find_package(Torch REQUIRED)
@@ -55,3 +55,4 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
         mediandk
         opencv_java
         ${Torch_LIBS})
+

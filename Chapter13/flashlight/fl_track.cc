@@ -12,7 +12,7 @@ std::shared_ptr<fl::BatchDataset> make_dataset(int64_t n, int batch_size) {
 
   // and add some small noise
   auto noise = fl::randn({n}) * 0.1f;
-  y += noise;
+  y += noise; 
 
   std::vector<fl::Tensor> fields{x, y};
   auto dataset = std::make_shared<fl::TensorDataset>(fields);
@@ -25,11 +25,19 @@ int main() {
   MLFlow mlflow;
   mlflow.set_experiment("Linear regression");
 
+  // set run parameters
   int batch_size = 64;
+  float learning_rate = 0.0001;
+  float momentum = 0.01;
+  const int epochs = 100;
+  
+  // start a run
+  mlflow.start_run();
+
   auto train_dataset = make_dataset(/*n=*/10000, batch_size);
   auto test_dataset = make_dataset(/*n=*/1000, batch_size);
 
-  // Deifine model
+  // Define a model
   fl::Sequential model;
   model.add(fl::View({1, 1, 1, -1}));  // to process a batch
   model.add(fl::Linear(1, 1));
@@ -38,15 +46,12 @@ int main() {
   auto loss = fl::MeanSquaredError();
 
   // Define optimizer
-  float learning_rate = 0.0001;
-  float momentum = 0.5;
   auto sgd = fl::SGDOptimizer(model.params(), learning_rate, momentum);
 
   // Define epoch average MSE meter
   fl::AverageValueMeter meter;
 
-  const int epochs = 100;
-  mlflow.start_run();
+  // launch the training cycle
   for (int epoch_i = 0; epoch_i < epochs; ++epoch_i) {
     meter.reset();
     model.train();

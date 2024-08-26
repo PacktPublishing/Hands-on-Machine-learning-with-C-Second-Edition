@@ -26,7 +26,8 @@ void ObjectDetector::configure_resources() {
         return;
     }
 
-    create_camera();
+    if (!camera_device_)
+        create_camera();
 
     // configure output window size and format
     ACameraMetadata *metadata_obj{nullptr};
@@ -49,9 +50,10 @@ void ObjectDetector::configure_resources() {
         return;
     }
 
-    create_image_reader();
-
-    create_session();
+    if (!image_reader_ && !session_output_) {
+        create_image_reader();
+        create_session();
+    }
 }
 
 void ObjectDetector::allow_camera_session(std::string_view camera_id) {
@@ -88,10 +90,14 @@ void ObjectDetector::create_camera() {
 }
 
 void ObjectDetector::delete_camera() {
-    if (camera_mgr_)
-        ACameraManager_delete(camera_mgr_);
-    if (camera_mgr_)
+    if (camera_device_) {
         ACameraDevice_close(camera_device_);
+        camera_device_ = nullptr;
+    }
+    if (camera_mgr_) {
+        ACameraManager_delete(camera_mgr_);
+        camera_mgr_ = nullptr;
+    }
 }
 
 void ObjectDetector::create_image_reader() {
@@ -102,7 +108,10 @@ void ObjectDetector::create_image_reader() {
 }
 
 void ObjectDetector::delete_image_reader() {
-    AImageReader_delete(image_reader_);
+    if (image_reader_) {
+        AImageReader_delete(image_reader_);
+        image_reader_ = nullptr;
+    }
 }
 
 namespace {
@@ -162,31 +171,45 @@ void ObjectDetector::create_session() {
 
     // Start capturing continuously
     cam_status = ACameraCaptureSession_setRepeatingRequest(capture_session_,
-                                                           nullptr,
-                                                           1,
-                                                           &capture_request_,
-                                                           nullptr);
+                                                                nullptr,
+                                                                1,
+                                                                &capture_request_,
+                                                                nullptr);
     ASSERT(cam_status == ACAMERA_OK, "Could not start capturing session");
 }
 
 void ObjectDetector::delete_session() {
-    if (capture_session_)
+    if (capture_session_) {
         ACameraCaptureSession_stopRepeating(capture_session_);
-
-    if (output_container_)
+        capture_session_ = nullptr;
+    }
+    if (output_container_) {
         ACaptureSessionOutputContainer_free(output_container_);
-    if (session_output_)
+        output_container_ = nullptr;
+    }
+    if (session_output_) {
         ACaptureSessionOutput_free(session_output_);
-    if (output_target_)
+        session_output_ = nullptr;
+    }
+    if (output_target_) {
         ACameraOutputTarget_free(output_target_);
-    if (capture_request_)
+        output_target_ = nullptr;
+    }
+    if (capture_request_) {
         ACaptureRequest_free(capture_request_);
-    if (capture_session_)
+        capture_request_ = nullptr;
+    }
+    if (capture_session_) {
         ACameraCaptureSession_close(capture_session_);
+        capture_session_ = nullptr;
+    }
 }
 
 
 void ObjectDetector::draw_frame() {
+    if (image_reader_ == nullptr)
+        return;
+
     AImage *image = nullptr;
     auto status = AImageReader_acquireNextImage(image_reader_, &image);
     if (status != AMEDIA_OK) {

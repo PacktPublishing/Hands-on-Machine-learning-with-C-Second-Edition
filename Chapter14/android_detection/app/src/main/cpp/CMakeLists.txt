@@ -55,4 +55,3 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
         mediandk
         opencv_java
         ${Torch_LIBS})
-

@@ -21,9 +21,10 @@ Java_com_example_objectdetection_MainActivity_initObjectDetection(
         jstring camId) {
     auto camera_id = env->GetStringUTFChars(camId, nullptr);
     LOGI("Camera ID: %s", camera_id);
-    if (object_detector_)
+    if (object_detector_) {
         object_detector_->allow_camera_session(camera_id);
-    else
+        object_detector_->configure_resources();
+    } else
         LOGE("Object Detector object is missed!");
 }
 
@@ -31,8 +32,7 @@ extern "C" JNIEXPORT void JNICALL
 Java_com_example_objectdetection_MainActivity_stopObjectDetection(
         JNIEnv *,
         jobject /* this */) {
-    // ??? may be just stop
-    // object_detector_.reset();
+    object_detector_->release_resources();
 }
 
 static void ProcessAndroidCmd(struct android_app */*app*/, int32_t cmd) {

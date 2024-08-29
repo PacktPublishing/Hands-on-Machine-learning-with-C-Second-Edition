@@ -35,7 +35,8 @@ $START_DIR/android/pytorch/scripts/build_android.sh \
 -DCMAKE_PREFIX_PATH=$(python -c 'from distutils.sysconfig import get_python_lib; print(get_python_lib())') \
 -DPYTHON_EXECUTABLE=$(python -c 'import sys; print(sys.executable)') \
 
-# don't forget to upadte android project gradle local.properties file with next variables:
-# sdk.dir=$START_DIR/android/
-# build app with './gradlew build' command
+# don't forget to upadte android project buils.gradle.kts file with next variables:
+# val pytorchDir = "$START_DIR/android/pytorch/build_android/install/"
+# val opencvDir = "$START_DIR/android/OpenCV-android-sdk/sdk/native/jni/"
+
 

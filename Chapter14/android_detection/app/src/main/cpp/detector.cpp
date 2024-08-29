@@ -247,9 +247,6 @@ void ObjectDetector::process_image(ANativeWindow_Buffer *buf, AImage *image) {
     int32_t src_width;
     AImage_getWidth(image, &src_width);
 
-    AImageCropRect src_rect;
-    AImage_getCropRect(image, &src_rect);
-
     int32_t y_stride{0};
     AImage_getPlaneRowStride(image, 0, &y_stride);
     int32_t uv_stride1{0};
@@ -299,7 +296,6 @@ void ObjectDetector::process_image(ANativeWindow_Buffer *buf, AImage *image) {
                         2);
         }
         cv::Mat buffer_mat(src_width, src_height, CV_8UC4, buf->bits, buf->stride * 4);
-        //cv::rotate(rgba_img_, buffer_mat, cv::ROTATE_90_CLOCKWISE);
         rgba_img_.copyTo(buffer_mat);
     }
     // other cases should be processed in different way

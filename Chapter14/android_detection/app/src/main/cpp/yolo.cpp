@@ -174,7 +174,7 @@ void YOLO::output2results(const torch::Tensor &output,
 std::vector<YOLOResult> YOLO::non_max_suppression() {
     // do an sort on the confidence scores, from high to low.
     std::sort(results_.begin(), results_.end(), [](auto &r1, auto &r2) {
-        return r1.score < r2.score;
+        return r1.score > r2.score;
     });
 
     std::vector<YOLOResult> selected;

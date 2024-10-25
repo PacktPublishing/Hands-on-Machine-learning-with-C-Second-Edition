@@ -1,5 +1,5 @@
 FROM ubuntu:22.04
-MAINTAINER Kirill rotate@ukr.net
+MAINTAINER Kirill kirill.tomorrow@gmail.com
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -11,6 +11,7 @@ RUN apt-get install -y build-essential
 RUN apt-get install -y gdb
 RUN apt-get install -y git
 RUN apt-get install -y libfmt-dev
+RUN apt-get install -y wget
 
 RUN wget https://github.com/Kitware/CMake/releases/download/v3.27.5/cmake-3.27.5-Linux-x86_64.sh \
       -q -O /tmp/cmake-install.sh \
@@ -39,22 +40,21 @@ RUN apt-get install -y libhdf5-dev
 RUN apt-get install -y libjson-c-dev
 RUN apt-get install -y libx11-dev
 RUN apt-get install -y openjdk-8-jdk
-RUN apt-get install -y wget
 RUN apt-get install -y ninja-build
 RUN apt-get install -y gnuplot
 RUN apt-get install -y vim
 RUN apt-get install -y python3-venv
 RUN apt-get install -y libcpuinfo-dev
+RUN apt-get install -y libspdlog-dev
 
 
 RUN pip install pyyaml
 RUN pip install typing
 RUN pip install typing_extensions
 RUN pip install optuna
-RUN pip install pytorch==2.3.1
+RUN pip install torch==2.3.1 --index-url https://download.pytorch.org/whl/cpu
 RUN pip install transformers
-RUN pip install mlflow=2.15.0
-
+RUN pip install mlflow==2.15.0
 
 
 RUN mkdir development

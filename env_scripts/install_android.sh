@@ -35,7 +35,6 @@ export ANDROID_ABI='arm64-v8a'
 export ANDROID_STL_SHARED=1 
 
 $START_DIR/android/pytorch/scripts/build_android.sh \
--DBUILD_CAFFE2_MOBILE=OFF \
 -DBUILD_SHARED_LIBS=ON \
 -DUSE_VULKAN=OFF \
 -DCMAKE_PREFIX_PATH=$(python -c 'from distutils.sysconfig import get_python_lib; print(get_python_lib())') \

@@ -48,7 +48,7 @@ void PlotClasses(const Classes& classes,
 
 template <typename ViewCol, typename ViewRow>
 void SVMClassification(size_t num_classes,
-                       const ViewCol& train_input,
+                       const arma::mat& train_input,
                        const ViewRow& train_labels,
                        const ViewCol& test_input,
                        const ViewRow& test_labels,
@@ -78,7 +78,7 @@ void SVMClassification(size_t num_classes,
 }
 
 template <typename ViewCol, typename ViewRow>
-void LRClassification(const ViewCol& train_input,
+void LRClassification(const arma::mat& train_input,
                       const ViewRow& train_labels,
                       const ViewCol& test_input,
                       const ViewRow& test_labels,
@@ -109,7 +109,7 @@ void LRClassification(const ViewCol& train_input,
 
 template <typename ViewCol, typename ViewRow>
 void SMRClassification(size_t num_classes,
-                       const ViewCol& train_input,
+                       const arma::mat& train_input,
                        const ViewRow& train_labels,
                        const ViewCol& test_input,
                        const ViewRow& test_labels,
@@ -171,7 +171,7 @@ int main(int argc, char** argv) {
         size_t test_num = 300;
         auto test_input = data.head_cols(test_num);
         auto test_labels = labels.head_cols(test_num);
-        auto train_input = data.tail_cols(num_samples - test_num);
+        arma::mat train_input = data.tail_cols(num_samples - test_num);
         auto train_labels = labels.tail_cols(num_samples - test_num);
 
         SVMClassification(num_classes, train_input, train_labels, test_input, test_labels, dataset);

@@ -15,7 +15,7 @@ void handle_result(const httplib::Result& res) {
   if (check_result(res, 200))
     return;
   std::ostringstream oss;
-  oss << "Request error status: " << res->status << " " << httplib::detail::status_message(res->status);
+  oss << "Request error status: " << res->status << " " << httplib::status_message(res->status);
   oss << ", message: " << std::endl
       << res->body;
   throw std::runtime_error(oss.str());

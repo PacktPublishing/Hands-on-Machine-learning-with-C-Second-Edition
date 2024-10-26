@@ -39,7 +39,7 @@ int main(int /*argc*/, char** /*argv*/) {
   // Grid search for the best regularization parameter lambda
   // Using 80% of data for training and remaining 20% for assessing MSE.
   double validation_size = 0.2;
-  HyperParameterTuner<LinearRegression, MSE, SimpleCV> parameters_tuner(validation_size,
+  HyperParameterTuner<LinearRegression<>, MSE, SimpleCV> parameters_tuner(validation_size,
                                                                         rand_samples, rand_labels);
 
   // Finding the best value for lambda from the values 0.0, 0.001, 0.01, 0.1,
@@ -52,10 +52,10 @@ int main(int /*argc*/, char** /*argv*/) {
 
   // Train model
   // double lambda = 0.01;
-  // LinearRegression linear_regression(rand_samples, rand_labels, lambda);
+  // LinearRegression<> linear_regression(rand_samples, rand_labels, lambda);
 
   // Use best model
-  LinearRegression& linear_regression = parameters_tuner.BestModel();
+  LinearRegression<>& linear_regression = parameters_tuner.BestModel();
 
   // Make new perdictions
   size_t num_new_samples = 50;

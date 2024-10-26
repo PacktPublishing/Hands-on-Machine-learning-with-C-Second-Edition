@@ -24,6 +24,7 @@ ENV PATH="/usr/bin/cmake/bin:${PATH}"
 
 RUN apt-get install -y python3
 RUN apt-get install -y python3-pip
+RUN apt-get install -y python-is-python3
 RUN apt-get install -y libblas-dev
 RUN apt-get install -y libopenblas-dev
 RUN apt-get install -y libfftw3-dev 
@@ -40,6 +41,7 @@ RUN apt-get install -y libhdf5-dev
 RUN apt-get install -y libjson-c-dev
 RUN apt-get install -y libx11-dev
 RUN apt-get install -y openjdk-8-jdk
+RUN apt-get install -y openjdk-11-jdk
 RUN apt-get install -y ninja-build
 RUN apt-get install -y gnuplot
 RUN apt-get install -y vim
@@ -66,7 +68,10 @@ ADD install_env.sh /development
 RUN chmod 777 /development/install_env.sh
 ADD install_android.sh /development
 RUN chmod 777 /development/install_android.sh
+ADD install_lib_custom.sh /development
+RUN chmod 777 /development/install_lib_custom.sh
 
 WORKDIR /development
 RUN ./install_env.sh
+RUN ./install_android.sh
 

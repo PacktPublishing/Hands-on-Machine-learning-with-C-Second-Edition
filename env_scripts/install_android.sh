@@ -11,13 +11,19 @@ unzip opencv-4.10.0-android-sdk.zip
 
 wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
 unzip commandlinetools-linux-9477386_latest.zip
+mv cmdline-tools latest
+mkdir cmdline-tools
+mv latest cmdline-tools
 
-yes | ./tools/bin/sdkmanager --licenses
-yes | ./tools/bin/sdkmanager "platform-tools"
-yes | ./tools/bin/sdkmanager "platforms;android-35"
-yes | ./tools/bin/sdkmanager "build-tools;35.0.1"
-yes | ./tools/bin/sdkmanager "system-images;android-35;google_apis;arm64-v8a"
-yes | ./tools/bin/sdkmanager --install "ndk;26.1.10909125 "
+# Set export JAVA_HOME variable to point where java SDK is installed  for example:
+# export JAVA_HOME=~/android-studio/jbr
+
+yes | ./cmdline-tools/latest/bin/sdkmanager --licenses
+yes | ./cmdline-tools/latest/bin/sdkmanager "platform-tools"
+yes | ./cmdline-tools/latest/bin/sdkmanager "platforms;android-35"
+yes | ./cmdline-tools/latest/bin/sdkmanager "build-tools;35.0.0"
+yes | ./cmdline-tools/latest/bin/sdkmanager "system-images;android-35;google_apis;arm64-v8a"
+yes | ./cmdline-tools/latest/bin/sdkmanager --install "ndk;26.1.10909125"
 
 git clone https://github.com/pytorch/pytorch.git
 cd pytorch/

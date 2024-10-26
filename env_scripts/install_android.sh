@@ -19,7 +19,7 @@ mv latest cmdline-tools
 # export JAVA_HOME=~/android-studio/jbr
 
 yes | ./cmdline-tools/latest/bin/sdkmanager --licenses
-yes | ./cmdline-tools/latest/bin/sdkmanager "platform-tools"
+yes | ./cmdline-tools/latest/bin/sdkmanager "platform-tools" "tools"
 yes | ./cmdline-tools/latest/bin/sdkmanager "platforms;android-35"
 yes | ./cmdline-tools/latest/bin/sdkmanager "build-tools;35.0.0"
 yes | ./cmdline-tools/latest/bin/sdkmanager "system-images;android-35;google_apis;arm64-v8a"

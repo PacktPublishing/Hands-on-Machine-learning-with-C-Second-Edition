@@ -34,15 +34,11 @@ mkdir -p libs/sources
 # NlohmanJson
 . ./install_lib.sh https://github.com/nlohmann/json.git v3.11.3 -DJSON_BuildTests=OFF
 
-
 # mlpack
 . ./install_lib.sh https://github.com/mlpack/mlpack 4.5.0 -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_TESTS=OFF -DDOWNLOAD_DEPENDENCIES=ON
 
 # Eigen
 . ./install_lib.sh https://gitlab.com/libeigen/eigen.git 3.4.0
-
-# PyTorch
-. ./install_lib.sh https://github.com/pytorch/pytorch v2.3.1 -DBUILD_PYTHON=OFF 
 
 # HighFive
 . ./install_lib.sh https://github.com/BlueBrain/HighFive v2.10.0
@@ -61,6 +57,9 @@ mkdir -p libs/sources
 
 # onnxruntime
 . ./install_lib_custom.sh https://github.com/Microsoft/onnxruntime.git v1.19.2 "./build.sh --config RelWithDebInfo --build_shared_lib --parallel --compile_no_warning_as_error --skip_submodule_sync --allow_running_as_root --skip_tests --cmake_extra_defines CMAKE_INSTALL_PREFIX=/development/libs/ --cmake_extra_defines nnxruntime_BUILD_UNIT_TESTS=OFF --target install"
+
+# PyTorch - install after onnxruntime to fix protobuf conflict
+. ./install_lib.sh https://github.com/pytorch/pytorch v2.3.1 -DBUILD_PYTHON=OFF 
 
 # return back
 cd $DEV_DIR

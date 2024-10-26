@@ -11,13 +11,12 @@ unzip opencv-4.10.0-android-sdk.zip
 
 wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
 unzip commandlinetools-linux-9477386_latest.zip
-mv cmdline-tools latest
-mkdir cmdline-tools
-mv latest cmdline-tools
+
 
 # Set export JAVA_HOME variable to point where java SDK is installed  for example:
 # export JAVA_HOME=~/android-studio/jbr
 
+yes | ./cmdline-tools/bin/sdkmanager --sdk_root=$ANDROID_SDK_ROOT "cmdline-tools;latest"
 yes | ./cmdline-tools/latest/bin/sdkmanager --licenses
 yes | ./cmdline-tools/latest/bin/sdkmanager "platform-tools" "tools"
 yes | ./cmdline-tools/latest/bin/sdkmanager "platforms;android-35"
